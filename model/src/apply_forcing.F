@@ -1,3 +1,6 @@
+C $Header: /u/gcmpack/MITgcm/model/src/apply_forcing.F,v 1.9 2017/10/04 20:40:35 jmc Exp $
+C $Name:  $
+
 #include "PACKAGES_CONFIG.h"
 #include "CPP_OPTIONS.h"
 
@@ -670,6 +673,65 @@ C     Ocean: Add temperature surface forcing (e.g., heat-flux) in surface level
 #ifdef SHORTWAVE_HEATING
 C Penetrating SW radiation
 c     IF ( usePenetratingSW ) THEN
+#ifdef ALLOW_BLING
+#ifdef BLING_HEATING
+C heating due to chlorophyll
+      IF ( useBLING ) THEN
+       DO j=0,sNy+1
+        DO i=0,sNx+1
+     &   gT_arr(i,j) = gT_arr(i,j) 
+     &   -Qsw(i,j,bi,bj)*(swfrac_ir(i,j,k,bi,bj) 
+     &   +swfrac_rd(i,j,k,bi,bj)+swfrac_bg(i,j,k,bi,bj))
+     &   *recip_Cp*mass2rUnit
+     &   *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+        ENDDO
+       ENDDO
+      ELSE
+       swfracb(1)=abs(rF(k))
+       swfracb(2)=abs(rF(k+1))
+       CALL SWFRAC(
+     I             2, minusOne,
+     U             swfracb,
+     I             myTime, 1, myThid )
+       kp1 = k+1
+       IF (k.EQ.Nr) THEN
+        kp1 = k
+        swfracb(2)=0. _d 0
+       ENDIF
+       DO j=0,sNy+1
+        DO i=0,sNx+1
+         gT_arr(i,j) = gT_arr(i,j)
+     &   -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
+     &                   -swfracb(2)*maskC(i,j,kp1, bi,bj))
+     &    *recip_Cp*mass2rUnit
+     &    *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+        ENDDO
+       ENDDO
+      ENDIF
+#else 
+       swfracb(1)=abs(rF(k))
+       swfracb(2)=abs(rF(k+1))
+       CALL SWFRAC(
+     I             2, minusOne,
+     U             swfracb,
+     I             myTime, 1, myThid )
+       kp1 = k+1
+       IF (k.EQ.Nr) THEN
+        kp1 = k
+        swfracb(2)=0. _d 0
+       ENDIF
+       DO j=0,sNy+1
+        DO i=0,sNx+1
+         gT_arr(i,j) = gT_arr(i,j)
+     &   -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
+     &                   -swfracb(2)*maskC(i,j,kp1, bi,bj))
+     &    *recip_Cp*mass2rUnit
+     &    *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+        ENDDO
+       ENDDO
+
+#endif
+#else 
        swfracb(1)=abs(rF(k))
        swfracb(2)=abs(rF(k+1))
        CALL SWFRAC(
@@ -691,6 +753,7 @@ c     IF ( usePenetratingSW ) THEN
         ENDDO
        ENDDO
 c     ENDIF
+#endif
 #endif
 
 #ifdef ALLOW_FRAZIL

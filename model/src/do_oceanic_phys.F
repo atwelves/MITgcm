@@ -1,8 +1,5 @@
 #include "PACKAGES_CONFIG.h"
 #include "CPP_OPTIONS.h"
-#ifdef ALLOW_MOM_COMMON
-# include "MOM_COMMON_OPTIONS.h"
-#endif
 #ifdef ALLOW_AUTODIFF
 # include "AUTODIFF_OPTIONS.h"
 #endif
@@ -296,9 +293,8 @@ C jmc: moved here before any freezing/seaice pkg adjustment of surf-fluxes
        ENDDO
       ENDDO
 # endif
-#endif /* ALLOW_AUTODIFF */
-
-#if (defined (ALLOW_SIGMAR_COST_CONTRIBUTION) || defined (ALLOW_LEITH_QG))
+# ifdef ALLOW_ECCO
+#  ifdef ALLOW_SIGMAR_COST_CONTRIBUTION
       DO bj=myByLo(myThid),myByHi(myThid)
        DO bi=myBxLo(myThid),myBxHi(myThid)
         DO k=1,Nr
@@ -310,7 +306,9 @@ C jmc: moved here before any freezing/seaice pkg adjustment of surf-fluxes
         ENDDO
        ENDDO
       ENDDO
-#endif /* ALLOW_SIGMAR_COST_CONTRIBUTION or ALLOW_LEITH_QG*/
+#  endif
+# endif
+#endif /* ALLOW_AUTODIFF */
 
 #ifdef ALLOW_FRAZIL
       IF ( useFRAZIL ) THEN
@@ -320,6 +318,16 @@ CADJ STORE salt  = comlev1, key=ikey_dynamics, kind=isbyte
        CALL FRAZIL_CALC_RHS( myTime, myIter, myThid )
       ENDIF
 #endif /* ALLOW_FRAZIL */
+
+#ifdef ALLOW_BLING
+#ifdef BLING_HEATING
+      IF ( useBLING ) THEN
+       CALL BLING_SWFRAC( swfrac_ir, swfrac_rd, swfrac_bg,
+     &                    bi, bj, imin, imax, jmin, jmax,
+     &                    myTime, myIter, myThid )
+      ENDIF
+#endif
+#endif
 
 #ifndef OLD_THSICE_CALL_SEQUENCE
 #if (defined ALLOW_THSICE) && !(defined ALLOW_ATM2D)
@@ -814,15 +822,15 @@ cph Avoid variable aliasing for adjoint !!!
      I             rhoInSitu(1-OLx,1-OLy,k,bi,bj), rhoKm1, rhoKp1,
      O             sigmaX, sigmaY, sigmaR,
      I             myThid )
-
-#if (defined (ALLOW_SIGMAR_COST_CONTRIBUTION) || defined (ALLOW_LEITH_QG))
+#ifdef ALLOW_ECCO
+# ifdef ALLOW_SIGMAR_COST_CONTRIBUTION
             DO j=jMin,jMax
              DO i=iMin,iMax
               sigmaRfield(i,j,k,bi,bj)=sigmaR(i,j,k)
              ENDDO
             ENDDO
-#endif /* ALLOW_SIGMAR_COST_CONTRIBUTION or ALLOW_LEITH_QG */
-
+# endif
+#endif /* ALLOW_ECCO */
 #ifdef ALLOW_AUTODIFF
 #ifdef GMREDI_WITH_STABLE_ADJOINT
 cgf zero out adjoint fields to stabilize pkg/gmredi adjoint
