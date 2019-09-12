@@ -20,17 +20,11 @@ C     === Global variables ===
 #include "SIZE.h"
 #include "EEPARAMS.h"
 #include "PARAMS.h"
-#ifdef USE_EXFCO2
-# ifdef USE_EXF_INTERPOLATION
-#  ifdef ALLOW_EXCH2
-#   include "W2_EXCH2_SIZE.h"
-#   include "W2_EXCH2_TOPOLOGY.h"
-#  endif /* ALLOW_EXCH2 */
-#  include "SET_GRID.h"
-# endif /* USE_EXF_INTERPOLATION */
+#ifdef ALLOW_EXF
 # include "EXF_PARAM.h"
-# include "EXF_CONSTANTS.h"
-#endif /* USE_EXFCO2 */
+# include "EXF_INTERP_SIZE.h"
+# include "EXF_INTERP_PARAM.h"
+#endif /* ALLOW_EXF */
 #include "BLING_VARS.h"
 
 C     === Routine arguments ===
@@ -224,10 +218,9 @@ C                       attenuation
       _RL secperday
       integer k
 #ifdef USE_EXF_INTERPOLATION
-      INTEGER gridNx, gridNy
       INTEGER j
-      _RL inp_lon0, inp_lat0, inp_dLon, inp_dLat
-#endif
+#endif /* USE_EXF_INTERPOLATION */
+#endif /* ALLOW_EXF */
 
       _BEGIN_MASTER(myThid)
       errCount = 0
@@ -342,22 +335,13 @@ C Set self-shading parameters
 #ifdef USE_EXF_INTERPOLATION
 C--   set default input location to match (in case of simple Lat-Long grid)
 C     model grid cell-center position (leading to trivial interpolation)
-      inp_lon0 = xgOrigin + delX(1)*exf_half
-      inp_lat0 = ygOrigin + delY(1)*exf_half
-      inp_dLon = delX(1)
-      inp_dLat = delY(1)
-      apco2_lon0     = inp_lon0
-      apco2_lat0     = inp_lat0
-      apco2_nlon     = gridNx
-      apco2_nlat     = gridNy
-      apco2_lon_inc  = inp_dLon
+      apco2_lon0         = inp_lon0
+      apco2_lat0         = inp_lat0
+      apco2_nlon         = inp_gNx
+      apco2_nlat         = inp_gNy
+      apco2_lon_inc      = inp_dLon
       DO j=1,MAX_LAT_INC
-        IF (j.LT.gridNy) THEN
-          inp_dLat = (delY(j) + delY(j+1))*exf_half
-        ELSE
-          inp_dLat = 0.
-        ENDIF
-        apco2_lat_inc(j) = inp_dLat
+        apco2_lat_inc(j) = inp_dLat(j)
       ENDDO
 #endif /* USE_EXF_INTERPOLATION */
 #endif
