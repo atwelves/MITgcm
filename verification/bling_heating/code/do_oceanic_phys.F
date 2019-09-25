@@ -184,6 +184,11 @@ C     == Global variables ===
 # endif
 #endif /* ALLOW_AUTODIFF */
 
+#ifdef ALLOW_BLING
+#include "BLING_OPTIONS.h"
+#include "GCHEM.h"
+#endif
+
 C     !INPUT/OUTPUT PARAMETERS:
 C     == Routine arguments ==
 C     myTime :: Current time in simulation

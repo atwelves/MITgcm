@@ -10,7 +10,7 @@ C $Name:  $
 C     Package-specific Options & Macros go here
 
 c Active tracer for total phytoplankton biomass
-#define ADVECT_PHYTO
+#undef ADVECT_PHYTO
 
 c Prevents negative values in nutrient fields
 #define BLING_NO_NEG
