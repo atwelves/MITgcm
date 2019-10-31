@@ -27,7 +27,7 @@
  ivdc_kappa=100.,
  tempAdvScheme       = 2,
  saltAdvScheme       = 2,
- allowFreezing=.TRUE.,
+# allowFreezing=.TRUE.,
 # turn on looped cells
  hFacMin=.1,
  hFacMindz=50.,
@@ -60,6 +60,7 @@
  externForcingPeriod=2592000.,
  externForcingCycle=31104000.,
  monitorFreq= 1.,
+ forcing_In_AB = .false.,
  &
 
 # Gridding parameters

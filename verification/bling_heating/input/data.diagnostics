@@ -23,12 +23,12 @@
 #                'oceQnet ','SHIfwFlx','MXLDEPTH', 
                  'oceQnet ','MXLDEPTH', 
   filename(1) = 'surfDiag',
-  frequency(1) = 900.,
+  frequency(1) = 9000.,
   fields(1,2) = 'UVEL    ','VVEL    ','WVEL    ',
                 'THETA   ','SALT    ','RHOAnoma',
 # do not specify levels => all levels are selected
   filename(2) = 'dynDiag',
-  frequency(2) =  900.,
+  frequency(2) =  9000.,
 
 # seaice area and thickness
 #  fields(1,3) = 'SIarea','SIheff',
@@ -41,18 +41,18 @@
 # BIOGEOCHEM, SEA ICE & TRACERS
 
 # plankton growth, productivity and community structure
-fields(1,3) = 'BLGNPP','BLGNCP','BLGPSM','BLGPLG','BLGMU','BLGCHL',
-filename(3) = 'planktonDiag',
+#fields(1,3) = 'BLGNPP','BLGNCP','BLGPSM','BLGPLG','BLGMU','BLGCHL',
+#filename(3) = 'planktonDiag',
 # average every 5 days (to compare with satellite data), starting after 2.5 year spin up
-frequency(3) = 900.,
+#frequency(3) = 9000.,
 #timePhase(3) = 79056000.,
 
 # concentrations for 9 BLING plus 3 custom tracers. 10 is local iron; 11 is total meltwater; 12 is local meltwater;
 #fields(1,4) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08','TRAC09','TRAC10','TRAC11','TRAC12',
-fields(1,4) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08',
-filename(4) = 'tracerDiag',
+fields(1,3) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08',
+filename(3) = 'tracerDiag',
 # average monthly (to compare with B-SOSE outputs), starting after 1.5 year spin up of physical model only
-frequency(4) = 900.,
+frequency(3) = 9000.,
 #timePhase(4) = 47433600.,
 
 # fluxes for nitrate and phosphate (macronutrient) tracers, and two iron tracers
@@ -76,10 +76,10 @@ frequency(4) = 900.,
 #frequency(7) = 432000., 
 #timePhase(7) = 79056000.,
 
-#fields(1,8) = 'BLGMLD','BLGQSW','SIarea','SIheff',
-fields(1,5) = 'BLGMLD',
-filename(5) = 'lightDiagSurf',
-frequency(5) = 900.,
+fields(1,4) = 'SIarea','SIheff',
+#fields(1,5) = 'BLGMLD',
+filename(4) = 'lightDiagSurf',
+frequency(4) = 900.,
 #timePhase(8) = 79056000.,
 
 # full iron budget using suite of BLING sub-routines 

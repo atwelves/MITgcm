@@ -4,7 +4,7 @@
 # test strong implicit coupling method for LSR
  SEAICEuseStrImpCpl    = .TRUE.,
 #SEAICE_deltaTevp = 60.,
- SEAICE_clipVelocities = .TRUE.,
+# SEAICE_clipVelocities = .TRUE.,
 #
  SEAICE_salt0          = 4.,
  SEAICE_multDim        = 7,
