@@ -252,7 +252,7 @@ c  Light attenuation in middle of top layer
 c  Irradiance in middle of top layer
           irr_rd(i,j,1) = irr_surf(i,j) * exp(-atten_rd) / 2. _d 0
           irr_bg(i,j,1) = irr_surf(i,j) * exp(-atten_bg) / 2. _d 0
-          irr_inst(i,j,1) = irr_rd(i,j,1) + irr_bg(i,j,1) / 2. _d 0
+          irr_inst(i,j,1) = irr_rd(i,j,1) + irr_bg(i,j,1)
          ELSE
 
 c  Attenuation coefficient adjusted to chlorophyll in kth layer
@@ -266,7 +266,7 @@ c  Light attenuation from one more layer
 c  Irradiance in middle of layer k
           irr_rd(i,j,k) = irr_rd(i,j,k-1)*exp(-atten_rd)
           irr_bg(i,j,k) = irr_bg(i,j,k-1)*exp(-atten_bg)
-          irr_inst(i,j,k) = irr_rd(i,j,k) + irr_bg(i,j,k) / 2. _d 0
+          irr_inst(i,j,k) = irr_rd(i,j,k) + irr_bg(i,j,k)
          ENDIF
 
 #else
