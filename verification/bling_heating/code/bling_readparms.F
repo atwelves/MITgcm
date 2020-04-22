@@ -449,6 +449,8 @@ CAT Set self-shading parameters
       k_ir                 = 5. _d -2
       chi_rd               = 3.7 _d -2
       chi_bg               = 7.4 _d -2
+C      chi_rd               = 0 _d 0 
+C      chi_bg               = 0 _d 0   
       e_rd                 = 6.29 _d -2
       e_bg                 = 6.74 _d -2
 

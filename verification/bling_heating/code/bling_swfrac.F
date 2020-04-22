@@ -16,7 +16,7 @@ C     =================================================================
 
 C     === Global variables ===
 C     swfrac_ir    ::   Fraction of incoming infrared radiation 
-C     swfrac_red   ::   Fraction of incoming red light
+C     swfrac_rd    ::   Fraction of incoming red light
 C     swfrac_bg    ::   Fraction of incoming blue-green light
 
 #include "SIZE.h"
@@ -95,6 +95,10 @@ C update overlap regions
       _EXCH_XYZ_RL( swfrac_ir, myThid )
       _EXCH_XYZ_RL( swfrac_rd, myThid )
       _EXCH_XYZ_RL( swfrac_bg, myThid )
+
+      CALL DIAGNOSTICS_FILL(swfrac_ir ,'FRACIR  ',0,Nr,0,1,1,myThid)
+      CALL DIAGNOSTICS_FILL(swfrac_rd ,'FRACRD  ',0,Nr,0,1,1,myThid)
+      CALL DIAGNOSTICS_FILL(swfrac_bg ,'FRACBG  ',0,Nr,0,1,1,myThid)
 
       RETURN
       END

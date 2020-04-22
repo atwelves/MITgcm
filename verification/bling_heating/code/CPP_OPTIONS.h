@@ -36,7 +36,7 @@ C   so that d/dt(eta) is exactly equal to - Div.Transport
 
 C o Allow the use of Non-Linear Free-Surface formulation
 C   this implies that surface thickness (hFactors) vary with time
-#define NONLIN_FRSURF
+#undef NONLIN_FRSURF
 cph#define DISABLE_RSTAR_CODE
 cph#define DISABLE_SIGMA_CODE
 
