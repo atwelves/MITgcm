@@ -78,21 +78,21 @@
 #climsststartdate2  = 180000,
  climsstperiod      = 2592000.0,
 #
- atempfile         = 't_conv.bin',
- aqhfile           = 'q_conv.bin',
+ atempfile         = '2m_temp.bin',
+ aqhfile           = 'surface_humidity.bin',
 # ustressfile       = 'trenberth_taux.bin',
 # vstressfile       = 'trenberth_tauy.bin',
 #uwindfile         = 'core_u_wind_cs32.bin',
 #vwindfile         = 'core_v_wind_cs32.bin',
 #wspeedfile        = 'core_wndSpd_cs32.bin',
- precipfile        = 'prec_conv.bin',
- snowprecipfile    = 'snwP_conv.bin',
- lwdownfile        = 'lw_conv.bin',
- swdownfile        = 'sw_conv.bin',
+ precipfile        = 'precip_flux.bin',
+ snowprecipfile    = 'snow_flux.bin',
+ lwdownfile        = 'lw_down.bin',
+ swdownfile        = 'sw_down.bin',
 # runoffFile        = 'core_rnof_1_cs32.bin'
 # runoftempFile     = 'runoff_temperature.bin'
- climsstfile       = 'sst_conv.bin',
- climsssfile       = 'sss_conv.bin',
+# climsstfile       = 'sst_conv.bin',
+# climsssfile       = 'sss_conv.bin',
 #
  &
 

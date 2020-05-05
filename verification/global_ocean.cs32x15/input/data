@@ -42,7 +42,7 @@
 
 # Time stepping parameters
  &PARM03
- nIter0=72000,
+ nIter0=0,
  nTimeSteps=20,
  deltaTMom   =1200.,
  deltaTtracer=86400.,

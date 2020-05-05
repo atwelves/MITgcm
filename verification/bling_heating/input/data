@@ -43,7 +43,7 @@
 # Time stepping parameters
  &PARM03
  nIter0=0,
- nTimeSteps = 34561,
+ nTimeSteps = 96,
  deltaTmom  = 900.,
  tauCD =     321428.,
  deltaTtracer= 900.,
@@ -59,7 +59,7 @@
  periodicExternalForcing=.TRUE.,
  externForcingPeriod=2592000.,
  externForcingCycle=31104000.,
- monitorFreq= 1.,
+ monitorFreq= 96.,
  forcing_In_AB = .false.,
  &
 
@@ -67,7 +67,7 @@
  &PARM04
  usingSphericalPolarGrid=.TRUE.,
  delZ=  10., 10., 10., 10., 10.,
-        20., 20., 20., 20., 20.,
+        20., 20., 20., 20., 20., 
         50., 50., 50., 50., 50.,
  ygOrigin=-90.,
  delX=128*2.8125,
@@ -76,14 +76,14 @@
 
 # Input datasets
  &PARM05
- bathyFile=      'bathy.bin',
-# hydrogThetaFile='lev_clim_temp.bin',
-# hydrogSaltFile= 'lev_clim_salt.bin',
+ bathyFile=      'flat_bathy.bin',
+ hydrogThetaFile='init_temp.bin',
+ hydrogSaltFile= 'init_salt.bin',
  zonalWindFile=  'tren_taux.bin',
  meridWindFile=  'tren_tauy.bin',
- thetaClimFile=  'lev_monthly_temp.bin',
- saltClimFile=   'lev_monthly_salt.bin',
- surfQFile=      'shi_qnet.bin',
- EmPmRFile=      'shi_empmr_year.bin',
- the_run_name=   'Tutorial Biogeo',
+# thetaClimFile=  'lev_monthly_temp.bin',
+# saltClimFile=   'lev_monthly_salt.bin',
+# surfQFile=      'shi_qnet.bin',
+# EmPmRFile=      'shi_empmr_year.bin',
+ the_run_name=   'BLING_heating',
  &
