@@ -446,7 +446,7 @@ C     Default values
 CAT Set self-shading parameters
       k0_rd                = 0.225 _d 0 
       k0_bg                = 2.32  _d -2
-      k_ir                 = 5. _d -2
+      k_ir                 = 2.86 _d 0
       chi_rd               = 3.7 _d -2
       chi_bg               = 7.4 _d -2
 C      chi_rd               = 0 _d 0 

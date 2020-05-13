@@ -21,11 +21,13 @@
 # dumpAtLast   = .TRUE.,
   fields(1,1) = 'ETAN    ','oceTAUX ','oceTAUY ',
 #                'oceQnet ','SHIfwFlx','MXLDEPTH', 
-                 'oceQnet ','MXLDEPTH','oceQsw', 
+                 'oceQnet ','MXLDEPTH','oceQsw',
+                 'TFLUX','WTHMASS', 
   filename(1) = 'surfDiag',
   frequency(1) = 2592000.,
   fields(1,2) = 'UVEL    ','VVEL    ','WVEL    ',
-#                'THETA   ','SALT    ','RHOAnoma',
+                'THETA   ','SALT    ','RHOAnoma',
+                'TOTTTEND',
                 
 # do not specify levels => all levels are selected
   filename(2) = 'dynDiag',
@@ -95,9 +97,19 @@ frequency(5) = 2592000.,
 #frequency(10) = 2592000.,
 #timePhase(10) = 47433600.,
 
+###########  ~  HEAT BUDGET  ~   ########
+
 fields(1,6) = 'FRACIR','FRACRD','FRACBG',
 filename(6) = 'swHeating',
 frequency(6) = 2592000.,
+
+fields(1,7) = 'ADVr_TH','ADVx_TH','ADVy_TH',
+filename(7) = 'advDiag',
+frequency(7) = 2592000.,
+
+fields(1,8) = 'DFrE_TH','DFxE_TH','DFyE_TH','DFrI_TH',
+filename(8) = 'diffDiag',
+frequency(8) = 2592000.,
 
  &
 
