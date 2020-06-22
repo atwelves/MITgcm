@@ -52,10 +52,10 @@ frequency(3) = 2592000.,
 
 # concentrations for 9 BLING plus 3 custom tracers. 10 is local iron; 11 is total meltwater; 12 is local meltwater;
 #fields(1,4) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08','TRAC09','TRAC10','TRAC11','TRAC12',
-fields(1,4) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08',
-filename(4) = 'tracerDiag',
+#fields(1,4) = 'TRAC01','TRAC02','TRAC03','TRAC04','TRAC05','TRAC06','TRAC07','TRAC08',
+#filename(4) = 'tracerDiag',
 # average monthly (to compare with B-SOSE outputs), starting after 1.5 year spin up of physical model only
-frequency(4) = 2592000.,
+#frequency(4) = 2592000.,
 #timePhase(4) = 47433600.,
 
 # fluxes for nitrate and phosphate (macronutrient) tracers, and two iron tracers
@@ -79,10 +79,10 @@ frequency(4) = 2592000.,
 #frequency(7) = 432000., 
 #timePhase(7) = 79056000.,
 
-fields(1,5) = 'SIarea','SIheff',
+fields(1,4) = 'SIarea','SIheff',
 #fields(1,5) = 'BLGMLD',
-filename(5) = 'lightDiagSurf',
-frequency(5) = 2592000.,
+filename(4) = 'lightDiagSurf',
+frequency(4) = 2592000.,
 #timePhase(8) = 79056000.,
 
 # full iron budget using suite of BLING sub-routines 
@@ -99,16 +99,22 @@ frequency(5) = 2592000.,
 
 ###########  ~  HEAT BUDGET  ~   ########
 
-fields(1,6) = 'FRACIR','FRACRD','FRACBG',
-filename(6) = 'swHeating',
+fields(1,5) = 'FRACIR','FRACRD','FRACBG',
+filename(5) = 'swHeating',
+frequency(5) = 2592000.,
+
+fields(1,6) = 'ADVr_TH','ADVx_TH','ADVy_TH',
+filename(6) = 'advDiag',
 frequency(6) = 2592000.,
 
-fields(1,7) = 'ADVr_TH','ADVx_TH','ADVy_TH',
-filename(7) = 'advDiag',
+fields(1,7) = 'DFrE_TH','DFxE_TH','DFyE_TH','DFrI_TH',
+filename(7) = 'diffDiag',
 frequency(7) = 2592000.,
 
-fields(1,8) = 'DFrE_TH','DFxE_TH','DFyE_TH','DFrI_TH',
-filename(8) = 'diffDiag',
+###########  ~  EUPHOTIC ZONE  ~  ########
+
+fields(1,8) = 'BLGZEU','BLGMLD','BLGZEUML','BLGMLZEU',
+filename(8) = 'zeuDiag',
 frequency(8) = 2592000.,
 
  &

@@ -43,7 +43,7 @@
 # Time stepping parameters
  &PARM03
  nIter0=0,
- nTimeSteps = 34560,
+ nTimeSteps = 69120,
  deltaTmom  = 900.,
  tauCD =     321428.,
  deltaTtracer= 900.,
@@ -61,6 +61,7 @@
  externForcingCycle=31104000.,
  monitorFreq= 96.,
  forcing_In_AB = .false.,
+ pickupStrictlyMatch = .false.,
  &
 
 # Gridding parameters

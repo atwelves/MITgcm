@@ -438,7 +438,7 @@ C     Default values
       wsink0               = 16. _d 0 / secperday
       wsink0z              = 80. _d 0
       wsinkacc             = 0.05 _d 0 / secperday
-      parfrac              = 0.4 _d 0
+      parfrac              = 0.40 _d 0
       alpfe                = 0.01 _d 0
       k0                   = 0.04 _d 0
       MLmix_max            = 200.0 _d 0
@@ -446,7 +446,8 @@ C     Default values
 CAT Set self-shading parameters
       k0_rd                = 0.225 _d 0 
       k0_bg                = 2.32  _d -2
-      k_ir                 = 2.86 _d 0
+      k_ir                 = 1.0 _d 0 / 0.6 _d 0
+C      k_ir                 = 2.86 _d 0
       chi_rd               = 3.7 _d -2
       chi_bg               = 7.4 _d -2
 C      chi_rd               = 0 _d 0 
