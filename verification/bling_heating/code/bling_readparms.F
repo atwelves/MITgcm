@@ -448,12 +448,12 @@ CAT Set self-shading parameters
       k0_bg                = 2.32  _d -2
       k_ir                 = 1.0 _d 0 / 0.6 _d 0
 C      k_ir                 = 2.86 _d 0
-      chi_rd               = 3.7 _d -2
-      chi_bg               = 7.4 _d -2
-C      chi_rd               = 0 _d 0 
-C      chi_bg               = 0 _d 0   
-      e_rd                 = 6.29 _d -2
-      e_bg                 = 6.74 _d -2
+C      chi_rd               = 3.7 _d -2
+C      chi_bg               = 7.4 _d -2
+      chi_rd               = 0 _d 0 
+      chi_bg               = 0 _d 0   
+      e_rd                 = 6.29 _d -1
+      e_bg                 = 6.74 _d -1
 
       bling_windFile  = ' '
       bling_atmospFile= ' '
