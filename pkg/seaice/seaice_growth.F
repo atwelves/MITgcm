@@ -1600,8 +1600,8 @@ C           heat flux overcoming potential melt by ocean
       IF ( useBLING ) THEN 
 C           If bio-optical feedbacks enabled, fraction of flux
 C           penetrating first layer is function of modelled chlorophyll
-            SWFracB = swfrac_ir(i,j,1,bi,bj) + swfrac_rd(i,j,1,bi,bj)
-     &              + swfrac_bg(i,j,1,bi,bj) 
+            SWFracB = swfrac_ir(i,j,2,bi,bj) + swfrac_rd(i,j,2,bi,bj)
+     &              + swfrac_bg(i,j,2,bi,bj) 
       ENDIF
 #endif
 #endif 
