@@ -1,3 +1,6 @@
+C $Header: /u/gcmpack/MITgcm/pkg/bling/bling_readparms.F,v 1.11 2017/08/09 15:23:39 mlosch Exp $
+C $Name:  $
+
 #include "BLING_OPTIONS.h"
 #ifdef ALLOW_EXF
 # include "EXF_OPTIONS.h"
@@ -11,7 +14,7 @@ C     | subroutine bling_readparms
 C     | o Initialise and read parameters for BLING model
 C     *========================================================*
 
-      IMPLICIT NONE
+      implicit none
 
 C     === Global variables ===
 #include "SIZE.h"
@@ -20,7 +23,7 @@ C     === Global variables ===
 #ifdef ALLOW_EXF
 # include "EXF_PARAM.h"
 # include "EXF_INTERP_SIZE.h"
-# include "EXF_INTERP_PARAM.h"
+C# include "EXF_INTERP_PARAM.h"
 #endif /* ALLOW_EXF */
 #include "BLING_VARS.h"
 
@@ -75,14 +78,9 @@ C     selectPHsolver=3 for Munhoven (2013) solvesaphe fast
 C ==========================================================
 
       NAMELIST /ABIOTIC_PARMS/
-     &                      permil,
-     &                      Pa2Atm,
-     &                      epsln
-#ifdef CARBONCHEM_SOLVESAPHE
-     & ,selectBTconst,selectFTconst,
-     &  selectHFconst,selectK1K2const,
-     &  selectPHsolver
-#endif
+     &                        permil,
+     &                        Pa2Atm,
+     &                        epsln
 
 C ==========================================================
 C   BLING parameters
@@ -170,8 +168,15 @@ C ==========================================================
      &                     k0,
      &                     MLmix_max,
      &                     river_conc_po4,
-     &                     river_dom_to_nut
-
+     &                     river_dom_to_nut,
+CAT add parameters for self-shading
+     &                     k0_rd,
+     &                     k0_bg,
+     &                     k_ir,
+     &                     chi_rd,
+     &                     chi_bg,
+     &                     e_rd,
+     &                     e_bg
 C ==========================================================
 C   BLING forcing
 C ==========================================================
@@ -197,20 +202,24 @@ C ==========================================================
      &         ,apco2_lon0, apco2_lon_inc, apco2_lat0, apco2_lat_inc,
      &          apco2_nlon, apco2_nlat, apco2_interpMethod
 #endif /* USE_EXF_INTERPOLATION */
-#endif /* ALLOW_EXF */
+#endif
 
 C ==========================================================
-C   secperday        :: Seconds in a day = 24*60*60
-C   permil           :: Set carbon mol/m3 <---> mol/kg conversion factor
-C                       Default permil = 1024.5 kg/m3
-C   Pa2Atm           :: Conversion factor for atmospheric pressure from EXF
+C   secperday        :: seconds in a day = 24*60*60
+C   permil           :: set carbon mol/m3 <---> mol/kg conversion factor
+C                       default permil = 1024.5 kg/m3
+C   Pa2Atm           :: Conversion factor for atmospheric pressure pLoad 
+C                       (when coupled to atmospheric model) into Atm.  
+C                       Default assumes pLoad in Pascal
 C                       1 Atm = 1.01325e5 Pa = 1013.25 mb
 C   epsln            :: A very small number
 C   CtoN             :: Carbon to nitrogen ratio in organic matter
 C   CtoP             :: Carbon to phosphorus ratio in organic matter
 C   NtoP             :: Nitrogen to phosphorus ratio in organic matter
-C   HtoC             :: Reduced hydrogen to carbon ratio in organic matter
-C   NO3toN           :: Nitrate to organic nitrogen ratio for denitrification
+C   HtoC             :: Reduced hydrogen to carbon ratio in organic
+C                       matter
+C   NO3toN           :: Nitrate to organic nitrogen ratio for
+C                       denitrification
 C   O2toN            :: Oxygen to nitrogen for biological activity
 C   O2toP            :: Oxygen to phosphorus for biological activity
 C   CatoN            :: Calcium to nitrogen uptake by small phyto
@@ -218,11 +227,14 @@ C   CatoP            :: Calcium to phosphorus uptake by small phyto
 C   masstoN          :: Organic matter mass to nitrogen ratio
 C   pivotal          :: Pivotal phytoplankton biomass, for grazing law
 C                       [mol P m-3  or  mol N m-3]
-C   Pc_0             :: Maximum phytoplankton carbon-specific growth rate at 0C
-C   Pc_0_diaz        :: Maximum diazotroph carbon-specific growth rate at 0C
+C   Pc_0             :: Maximum phytoplankton carbon-specific growth
+C                       rate at 0C
+C   Pc_0_diaz        :: Maximum diazotroph carbon-specific growth rate
+C                       at 0C
 C   lambda_0         :: Total mortality rate constant
 C   resp_frac        :: Fraction of production that is respired
-C   chl_min          :: Minimum chl concentration allowed (for numerical stability)
+C   chl_min          :: Minimum chl concentration allowed (for numerical
+C   stability)
 C   alpha_photo      :: Quantum yield under low light, Fe-replete
 C                       [g C g Chl-1 m2 W-1 s-1]
 C   alpha_max        :: Quantum yield under low light, abundant iron
@@ -236,45 +248,62 @@ C   gamma_POM        :: Particulate Organic Matter decay timescale
 C   gamma_biomass    :: Biomass adjustment time scale
 C   gamma_Si_0       :: Opal dissolution timescale
 C   k_Fe             :: Iron half-saturation concentration
-C   k_Fe_diaz        :: Iron half-saturation concentration for diazotrophs
-C   k_O2             :: Oxygen half-saturation concentration for aerobic respiration
+C   k_Fe_diaz        :: Iron half-saturation concentration for
+C                       diazotrophs
+C   k_O2             :: Oxygen half-saturation concentration for aerobic
+C                       respiration
 C   k_PO4            :: Phosphate half-saturation concentration
 C   k_NO3            :: Nitrate half-saturation concentration
 C   k_Si             :: Silicate half-saturation concentration
-C   k_PtoN           :: Phosphate half-saturation concentration for uptake ratio
-C   k_FetoN          :: Iron half-saturation concentration for uptake ratio
-C   k_FetoP          :: Iron half-saturation concentration for uptake ratio
-C   kFe_eq_lig_max   :: Maximum light-dependent iron ligand stability constant
-C   kFe_eq_lig_min   :: Minimum light-dependent iron ligand stability constant
+C   k_PtoN           :: Phosphate half-saturation concentration for
+C                       uptake ratio
+C   k_FetoN          :: Iron half-saturation concentration for uptake
+C                       ratio
+C   k_FetoP          :: Iron half-saturation concentration for uptake
+C                       ratio
+C   kFe_eq_lig_max   :: Maximum light-dependent iron ligand stability
+C                       constant
+C   kFe_eq_lig_min   :: Minimum light-dependent iron ligand stability
+C                       constant
 C   kFe_eq_lig_Femin :: Low-iron threshold for ligand stability constant
-C   kFe_eq_lig_irr   :: Irradiance scaling for iron ligand stability constant
+C   kFe_eq_lig_irr   :: Irradiance scaling for iron ligand stability
+C                       constant
 C   kFe_org          :: Iron scavenging, 1st order
 C   kFe_inorg        :: Iron scavenging, 2nd order
 C   PtoN_max         :: Phosphorus to Nitrogen uptake ratio maximum
 C   PtoN_min         :: Phosphorus to Nitrogen uptake ratio minimum
 C   FetoN_max        :: Iron to Nitrogen uptake ratio maximum
 C   FetoN_min        :: Iron to Nitrogen uptake ratio minimum
-C   FetoC_sed        :: Iron released per organic carbon delivery to sediments
+C   FetoC_sed        :: Iron released per organic carbon delivery to
+C                       sediments
 C   FetoP_max        :: Iron to Phosphorus uptake ratio maximum
 C   Fe_lim_min       :: Minimum iron limitation
 C   SitoN_uptake_max :: Silica to Nitrogen uptake ratio maximum
 C   SitoN_uptake_min :: Silica to Nitrogen uptake ratio minimum
-C   SitoN_uptake_scale:: Scale factor for Silica to Nitrogen uptake ratio
+C   SitoN_uptake_scale:: Scale factor for Silica to Nitrogen uptake
+C                        ratio
 C   SitoN_uptake_exp :: Exponent for Silica to Nitrogen uptake ratio
 C   remin_min        :: Minimum remineralization under anoxia
 C   oxic_min         :: Anaerobic respiration threshold
 C   ligand           :: Iron ligand concentration
 C   kappa_eppley     :: Temperature dependence of growth
 C   kappa_eppley_diaz:: Temperature dependence of growth for diazotrophs
-C   kappa_remin      :: Temperature dependence for particle fractionation
+C   kappa_remin      :: Temperature dependence for particle
+C                       fractionation
 C   kappa_remin_Si   :: Temperature dependence for silica
-C   ca_remin_depth   :: CaCO3 dissolution length scale (subject to omega)
-C   q_SitoN_diss     :: Stoichiometric role in opal dissolution, following TOPAZ
+C   ca_remin_depth   :: CaCO3 dissolution length scale (subject to
+C                       omega)
+C   q_SitoN_diss     :: Stoichiometric role in opal dissolution,
+C                       following TOPAZ
 C   phi_DOM          :: Fraction of uptake/consumption that becomes DOM
-C   phi_sm           :: Fraction of small phytoplankton biomass converted to detritus
-C   phi_lg           :: Fraction of large phytoplankton biomass converted to detritus
-C   phi_dvm          :: Fraction of particate production exported by animals
-C   sigma_dvm        :: Standard deviation of vertical migrator resting depth range
+C   phi_sm           :: Fraction of small phytoplankton biomass
+C                       converted to detritus
+C   phi_lg           :: Fraction of large phytoplankton biomass
+C                       converted to detritus
+C   phi_dvm          :: Fraction of particate production exported by
+C                       animals
+C   sigma_dvm        :: Standard deviation of vertical migrator resting
+C                       depth range
 C   wsink0           :: Sinking rate at surface
 C   wsink0z          :: Depth to which sinking rate remains constant
 C   wsinkacc         :: Sinking rate acceleration with depth
@@ -282,16 +311,30 @@ C   wsink_si         :: Opal sinking velocity
 C   parfrac          :: Fraction of Qsw available for photosynthesis
 C   alpfe            :: Solubility of aeolian iron
 C   k0               :: Light attentuation coefficient
-C   MLmix_max        :: Maximum depth over which light and biomass can be mixed
+C   MLmix_max        :: Maximum depth over which light and biomass can
+C                       be mixed
 C   river_conc_po4   :: Phosphate concentration in river runoff
 C   river_dom_to_nut :: DOM to PO4 ratio in river runoff
-
+C   -------------------------------------------------------------
+C   k0_rd             :: attenuation coefficient for red light, without
+C                       chlorophyll
+C   k0_bg             :: attenuation coefficient for blue-green light,
+C                       without chlorophyll
+C   k_ir             :: attenuation coefficient for infrared
+C   chi_rd           :: chlorophyll weighting coefficient for red light
+C                       attenuation
+C   chi_bg           :: chlorophyll weighting coefficient for blue-green light
+C                       attenuation
+C   e_rd             :: chlorophyll exponent for red light attenuation
+C   e_bg             :: chlorophyll exponent for blue-green light
+C                       attenuation
       _RL secperday
-#ifdef ALLOW_EXF
+      integer k
 #ifdef USE_EXF_INTERPOLATION
+      INTEGER gridNx, gridNy
       INTEGER j
-#endif /* USE_EXF_INTERPOLATION */
-#endif /* ALLOW_EXF */
+      _RL inp_lon0, inp_lat0, inp_dLon, inp_dLat
+#endif
 
       _BEGIN_MASTER(myThid)
       errCount = 0
@@ -395,19 +438,31 @@ C     Default values
       wsink0               = 16. _d 0 / secperday
       wsink0z              = 80. _d 0
       wsinkacc             = 0.05 _d 0 / secperday
-      parfrac              = 0.4 _d 0
+      parfrac              = 0.40 _d 0
       alpfe                = 0.01 _d 0
       k0                   = 0.04 _d 0
       MLmix_max            = 200.0 _d 0
 
-      bling_windFile         = ' '
-      bling_atmospFile       = ' '
-      bling_iceFile          = ' '
-      bling_ironFile         = ' '
-      bling_silicaFile       = ' '
-      bling_psmFile          = ' '
-      bling_plgFile          = ' '
-      bling_pdiazFile        = ' '
+CAT Set self-shading parameters
+      k0_rd                = 0.225 _d 0 
+      k0_bg                = 2.32  _d -2
+      k_ir                 = 1.0 _d 0 / 0.6 _d 0
+C      k_ir                 = 2.86 _d 0
+C      chi_rd               = 3.7 _d -2
+C      chi_bg               = 7.4 _d -2
+      chi_rd               = 0 _d 0 
+      chi_bg               = 0 _d 0   
+      e_rd                 = 6.29 _d -1
+      e_bg                 = 6.74 _d -1
+
+      bling_windFile  = ' '
+      bling_atmospFile= ' '
+      bling_iceFile   = ' '
+      bling_ironFile  = ' '
+      bling_silicaFile= ' '
+      bling_psmFile   = ' '
+      bling_plgFile   = ' '
+      bling_pdiazFile = ' '
       bling_Pc_2dFile        = ' '
       bling_Pc_2d_diazFile   = ' '
       bling_alpha_photo2dFile= ' '
@@ -424,35 +479,43 @@ C     Default values
       river_dom_to_nut       = 0. _d 0
 
 #ifdef ALLOW_EXF
-      apco2startdate1         = 0
-      apco2startdate2         = 0
-      apco2StartTime          = UNSET_RL
-      apco2period             = 0.0 _d 0
-      apco2RepCycle           = repeatPeriod
-      apco2const              = 0.0 _d 0
+      apco2startdate1   = 0
+      apco2startdate2   = 0
+      apco2StartTime    = UNSET_RL
+      apco2period       = 0.0 _d 0
+      apco2RepCycle     = repeatPeriod
+      apco2const        = 0.0 _d 0
       apco2_exfremo_intercept = 0.0 _d 0
-      apco2_exfremo_slope     = 0.0 _d 0
-      apco2file               = ' '
-      exf_inscal_apco2        =  1. _d 0
-      exf_outscal_apco2       =  1. _d 0
+      apco2_exfremo_slope = 0.0 _d 0
+      apco2file         = ' '
+      exf_inscal_apco2  =  1. _d 0
+      exf_outscal_apco2 =  1. _d 0
 #ifdef USE_EXF_INTERPOLATION
 C--   set default input location to match (in case of simple Lat-Long grid)
 C     model grid cell-center position (leading to trivial interpolation)
-      apco2_lon0         = inp_lon0
-      apco2_lat0         = inp_lat0
-      apco2_nlon         = inp_gNx
-      apco2_nlat         = inp_gNy
-      apco2_lon_inc      = inp_dLon
+      inp_lon0 = xgOrigin + delX(1)*exf_half
+      inp_lat0 = ygOrigin + delY(1)*exf_half
+      inp_dLon = delX(1)
+      inp_dLat = delY(1)
+      apco2_lon0     = inp_lon0
+      apco2_lat0     = inp_lat0
+      apco2_nlon     = gridNx
+      apco2_nlat     = gridNy
+      apco2_lon_inc  = inp_dLon
       DO j=1,MAX_LAT_INC
-        apco2_lat_inc(j) = inp_dLat(j)
+        IF (j.LT.gridNy) THEN
+          inp_dLat = (delY(j) + delY(j+1))*exf_half
+        ELSE
+          inp_dLat = 0.
+        ENDIF
+        apco2_lat_inc(j) = inp_dLat
       ENDDO
-      apco2_interpMethod = 1
 #endif /* USE_EXF_INTERPOLATION */
 #endif /* ALLOW_EXF */
 
 C     default periodic forcing to same as for physics
-      bling_forcingPeriod = externForcingPeriod
-      bling_forcingCycle  = externForcingCycle
+       bling_forcingPeriod = externForcingPeriod
+       bling_forcingCycle  = externForcingCycle
 
       WRITE(msgBuf,'(A)') ' BLING_READPARMS: opening data.bling'
       CALL PRINT_MESSAGE( msgBuf, standardMessageUnit,
@@ -484,94 +547,6 @@ C--   Close the open data file
       CLOSE(iUnit,STATUS='DELETE')
 #endif /* SINGLE_DISK_IO */
 
-      iUnit = standardMessageUnit
-C Record the solver to calculate pH and evaluate surface ocean pCO2
-#ifdef CARBONCHEM_SOLVESAPHE
-      IF ( selectPHsolver.GT.0 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Munhoven (2013) Solvesaphe for pH/pCO2'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectPHsolver.EQ.0 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Follows et al. (2006) for pH/pCO2'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ENDIF
-#endif
-
-C Record which carbonate coefficients are used and which pH/pCO2 solver
-#ifdef CARBONCHEM_SOLVESAPHE
-      WRITE(msgBuf,'(A)')
-     &  'Using Munhoven (2013) Solvesaphe carbon coefficients'
-      CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-C Munhoven (2013)'s "Solvesaphe" coefficients have several options:
-      IF ( selectK1K2const.EQ.1 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Millero (1995)/Mehrbach K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectK1K2const.EQ.2 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Roy et al. (1993) K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectK1K2const.EQ.3 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Millero (1995) "consensus" K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectK1K2const.EQ.4 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Luecker et al. (2000) K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectK1K2const.EQ.5 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Millero et al. (2010) K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectK1K2const.EQ.6 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Waters et al. (2014) K1 and K2 coefficients'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ENDIF
-      IF ( selectHFconst.EQ.1 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Dickson and Riley (1979) KF coefficient'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectHFconst.EQ.2 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Perez and Fraga (1987) KF coefficient'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ENDIF
-      IF ( selectBTconst.EQ.1 ) THEN
-         WRITE(msgBuf,'(A)')
-     & 'Using Uppstrom (1974) BT estimation from salinity'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectBTconst.EQ.2 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Lee et al (2010) BT estimation from salinity'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ENDIF
-      IF ( selectFTconst.EQ.1 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Riley (1965) FT estimation from salinity'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ELSEIF ( selectBTconst.EQ.2 ) THEN
-         WRITE(msgBuf,'(A)')
-     &  'Using Culkin (1965) FT estimation from salinity'
-         CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      ENDIF
-#else
-C OCMIP2 Coefficients from S/R CARBON_COEFFS in CARBON_CHEM.F
-      WRITE(msgBuf,'(A)')
-     &  'Using Millero (1995)/Mehrbach K1 and K2 coefficients'
-      CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      WRITE(msgBuf,'(A)')
-     &  'Using Dickson and Riley (1979) KF coefficient'
-      CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      WRITE(msgBuf,'(A)')
-     &  'Using Uppstrom (1974) BT estimation from salinity'
-      CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-      WRITE(msgBuf,'(A)')
-     &  'Using Riley (1965) FT estimation from salinity'
-      CALL PRINT_MESSAGE(msgBuf,iUnit,SQUEEZE_RIGHT,myThid)
-#endif
-
       IF ( errCount.GE.1 ) THEN
        WRITE(msgBuf,'(A,I3,A)')
      &     'BLING_READPARMS: detected', errCount,' fatal error(s)'
@@ -579,26 +554,6 @@ C OCMIP2 Coefficients from S/R CARBON_COEFFS in CARBON_CHEM.F
        CALL ALL_PROC_DIE( 0 )
        STOP 'ABNORMAL END: S/R BLING_READPARMS'
       ENDIF
-
-#ifdef CARBONCHEM_SOLVESAPHE
-      IF ( selectHFconst.GT.2 .OR. selectBTconst.GT.2
-     & .OR. selectFTconst.GT.2 ) THEN
-        WRITE(msgBuf,'(A)')
-     &    'BLING_READPARMS: selectHF, selectBT or selectFT > 2'
-        CALL PRINT_ERROR( msgBuf, myThid )
-        STOP 'ABNORMAL END: S/R BLING_READPARMS: solvesaphe_const error'
-      ELSEIF ( selectK1K2const.GT.6 ) THEN
-        WRITE(msgBuf,'(A)')
-     &    'BLING_READPARMS: selectK1K2const > 6 '
-        CALL PRINT_ERROR( msgBuf, myThid )
-        STOP 'ABNORMAL END: S/R BLING_READPARMS: solvesaphe_const error'
-      ELSEIF ( selectPHsolver.GT.3 ) THEN
-        WRITE(msgBuf,'(A)')
-     &    'BLING_READPARMS: selectPHsolver > 3 '
-        CALL PRINT_ERROR( msgBuf, myThid )
-        STOP 'ABNORMAL END: S/R BLING_READPARMS: select pH solver error'
-      ENDIF
-#endif
 
       _END_MASTER(myThid)
 

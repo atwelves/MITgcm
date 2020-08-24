@@ -1,3 +1,6 @@
+C $Header: /u/gcmpack/MITgcm/model/src/apply_forcing.F,v 1.9 2017/10/04 20:40:35 jmc Exp $
+C $Name:  $
+
 #include "PACKAGES_CONFIG.h"
 #include "CPP_OPTIONS.h"
 
@@ -416,6 +419,12 @@ C     == Global data ==
 #include "FFIELDS.h"
 #include "SURFACE.h"
 
+#ifdef ALLOW_BLING
+#include "GCHEM.h"
+#include "BLING_OPTIONS.h"
+#include "BLING_VARS.h"
+#endif
+
 C     !INPUT/OUTPUT PARAMETERS:
 C     gT_arr    :: the tendency array
 C     iMin,iMax :: Working range of x-index for applying forcing.
@@ -669,13 +678,47 @@ C     Ocean: Add temperature surface forcing (e.g., heat-flux) in surface level
 
 #ifdef SHORTWAVE_HEATING
 C Penetrating SW radiation
-c     IF ( usePenetratingSW ) THEN
+#ifdef ALLOW_BLING
+C heating due to chlorophyll
+      IF ( useBLING ) THEN
+       DO j=0,sNy+1
+        DO i=0,sNx+1
+#ifdef BLING_HEATING
+         swfracb(1) = swfrac_ir(i,j,k,bi,bj)
+     &   +swfrac_rd(i,j,k,bi,bj)+swfrac_bg(i,j,k,bi,bj)
+         IF (k.EQ.Nr) THEN
+         swfracb(2)=0. _d 0
+         ELSE
+         swfracb(2) = swfrac_ir(i,j,k+1,bi,bj)
+     &   +swfrac_rd(i,j,k+1,bi,bj)+swfrac_bg(i,j,k+1,bi,bj)
+         ENDIF
+#else 
+         swfracb(1)=abs(rF(k))
+         swfracb(2)=abs(rF(k+1))
+         CALL SWFRAC(
+     I            2, minusOne,
+     U            swfracb,
+     I            myTime, 1, myThid )
+         kp1 = k+1
+         IF (k.EQ.Nr) THEN
+          kp1 = k
+          swfracb(2)=0. _d 0
+         ENDIF
+#endif
+         gT_arr(i,j) = gT_arr(i,j)
+     &   -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
+     &                   -swfracb(2)*maskC(i,j,kp1, bi,bj))
+     &   *recip_Cp*mass2rUnit
+     &   *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+        ENDDO
+       ENDDO
+      ELSE
        swfracb(1)=abs(rF(k))
        swfracb(2)=abs(rF(k+1))
        CALL SWFRAC(
-     I             2, minusOne,
-     U             swfracb,
-     I             myTime, 1, myThid )
+     I            2, minusOne,
+     U            swfracb,
+     I            myTime, 1, myThid )
        kp1 = k+1
        IF (k.EQ.Nr) THEN
         kp1 = k
@@ -684,14 +727,36 @@ c     IF ( usePenetratingSW ) THEN
        DO j=0,sNy+1
         DO i=0,sNx+1
          gT_arr(i,j) = gT_arr(i,j)
-     &   -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
-     &                   -swfracb(2)*maskC(i,j,kp1, bi,bj))
-     &    *recip_Cp*mass2rUnit
-     &    *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+     &  -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
+     &                  -swfracb(2)*maskC(i,j,kp1, bi,bj))
+     &   *recip_Cp*mass2rUnit
+     &   *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
         ENDDO
        ENDDO
-c     ENDIF
+      ENDIF
+#else
+      swfracb(1)=abs(rF(k))
+      swfracb(2)=abs(rF(k+1))
+      CALL SWFRAC(
+     I           2, minusOne,
+     U           swfracb,
+     I           myTime, 1, myThid )
+      kp1 = k+1
+      IF (k.EQ.Nr) THEN
+       kp1 = k
+       swfracb(2)=0. _d 0
+      ENDIF
+      DO j=0,sNy+1
+       DO i=0,sNx+1
+        gT_arr(i,j) = gT_arr(i,j)
+     &  -Qsw(i,j,bi,bj)*(swfracb(1)*maskC(i,j,k,bi,bj)
+     &                  -swfracb(2)*maskC(i,j,kp1, bi,bj))
+     &  *recip_Cp*mass2rUnit
+     &  *recip_drF(k)*_recip_hFacC(i,j,k,bi,bj)
+       ENDDO
+      ENDDO
 #endif
+#endif /* ALLOW_SHORTWAVE_HEATING */
 
 #ifdef ALLOW_FRAZIL
       IF ( useFRAZIL )

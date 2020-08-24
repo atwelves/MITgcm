@@ -1,0 +1,12 @@
+# Packages
+ &PACKAGES
+ useGMRedi=.TRUE.,
+ usePTRACERS=.TRUE.,
+#useGCHEM=.TRUE.,
+#useMNC=.TRUE.,
+ useSEAICE=.TRUE.,
+ useEXF=.TRUE.,
+ useCAL=.TRUE.,
+ useDiagnostics=.TRUE.,
+ &
+  

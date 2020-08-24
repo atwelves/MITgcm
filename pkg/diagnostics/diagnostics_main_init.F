@@ -667,6 +667,29 @@ C--   surface fluxes:
       CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I          diagName, diagCode, diagUnits, diagTitle, 0, myThid )
 
+CAT add diagnostics for fractions of energy absorbed in each wave-band
+
+      diagName  = 'FRACIR  '
+      diagTitle = 'fraction of infra-red penetrating to this depth'
+      diagUnits = '                '
+      diagCode  = 'SM P    MR      '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I          diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
+      diagName  = 'FRACRD  '
+      diagTitle = 'fraction of red PAR penetrating to this depth'
+      diagUnits = '                '
+      diagCode  = 'SM P    MR      '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I          diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
+      diagName  = 'FRACBG  '
+      diagTitle = 'fraction of blue-green PAR penetrating to this depth'
+      diagUnits = '                '
+      diagCode  = 'SM P    MR      '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I          diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
       diagName  = 'oceFreez'
       diagTitle = 'heating from freezing of sea-water (allowFreezing=T)'
       diagUnits = 'W/m^2           '

@@ -507,6 +507,32 @@ c mld
 
 c light
 
+CAT { Diagnostics added for euphotic depth (zeu) and ratios mld:zeu
+CAT   and zeu:mld
+
+      diagName  = 'BLGZEU  '
+      diagTitle = 'Self-shaded euphotic depth'
+      diagUnits = 'm               '
+      diagCode  = 'SM P    L1      '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum, 
+     I       diagName, diagCode, diagUnits, diagTitle, 0, myThid )  
+
+      diagName  = 'BLGMLZEU'
+      diagTitle = 'Ratio of mixed layer depth to euphotic depth'
+      diagUnits = '-                '
+      diagCode  = 'SM P    L1       '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I       diagName, diagCode, diagUnits, diagTitle, 0, myThid ) 
+
+      diagName  = 'BLGZEUML'
+      diagTitle = 'Ratio of euphotic depth to mixed layer depth'
+      diagUnits = '-                '
+      diagCode  = 'SM P    L1       '
+      CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I       diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+    
+CAT }
+
       diagName  = 'BLGIRRIS'
       diagTitle = 'Local irradiance'
       diagUnits = 'W/m2            '

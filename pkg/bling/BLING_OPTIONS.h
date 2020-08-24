@@ -1,3 +1,6 @@
+C $Header: /u/gcmpack/MITgcm/pkg/bling/BLING_OPTIONS.h,v 1.6 2017/03/16 17:03:26 mmazloff Exp $
+C $Name:  $
+
 #ifndef BLING_OPTIONS_H
 #define BLING_OPTIONS_H
 #include "PACKAGES_CONFIG.h"
@@ -67,22 +70,19 @@ C otherwise set to constant value in data.bling
 C Simplify some parts of the code that are problematic when using the adjoint
 #define BLING_ADJOINT_SAFE
 
+c Allow self-shading to impact ocean heating
+#undef BLING_HEATING
+
 C For adjoint safe, do not call bling_dvm
 #ifdef BLING_ADJOINT_SAFE
 #undef USE_BLING_DVM
+c Also do not allow biophysical feedback
+#undef BLING_HEATING
 #endif
 
-C ABIOTIC OPTIONS
-C Compile Munhoven (2013)'s "Solvesaphe" package for pH/pCO2
-C  can still select Follows et al (2006) solver in data.bling,
-C  but will use solvesaphe dissociation coefficient options.
-#undef CARBONCHEM_SOLVESAPHE
-
-C In S/R CARBON_CHEM convert ak1 and ak2 to the total pH scale
-C  consistent with other coefficients (currently on the seawater scale).
-C NOTE: Has NO effect when CARBONCHEM_SOLVESAPHE is defined (different
-C  coeffs are used).
-#undef CARBONCHEM_TOTALPHSCALE
+c If bio-optical feedback implemented, require self-shading
+#ifndef PHYTO_SELF_SHADING
+#undef BLING_HEATING
 
 C When calculating the fraction of sinking organic matter, use model biomass diagnostics.
 #define NEW_FRAC_EXP

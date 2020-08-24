@@ -8,8 +8,8 @@ C     | subroutine bling_init_varia
 C     | o Initialize variable parameters
 C     ==========================================================
 
-      IMPLICIT NONE
-
+      implicit none
+      
 C     === Global variables ===
 #include "SIZE.h"
 #include "EEPARAMS.h"
@@ -34,8 +34,8 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 C--   Initialise global variables
       DO bj = myByLo(myThid), myByHi(myThid)
        DO bi = myBxLo(myThid), myBxHi(myThid)
-        DO j=1-OLy,sNy+OLy
-         DO i=1-OLx,sNx+OLx
+        DO j=1-Oly,sNy+Oly
+         DO i=1-Olx,sNx+Olx
           DO k = 1, Nr
             omegaC(i,j,k,bi,bj)     = 0. _d 0
             omegaAr(i,j,k,bi,bj)    = 0. _d 0
@@ -47,6 +47,10 @@ C--   Initialise global variables
 #ifndef USE_BLING_V1
             phyto_diaz(i,j,k,bi,bj) = 4. _d -7 / permil
 #endif
+CAT new global variables added for bling_swfrac
+            swfrac_ir(i,j,k,bi,bj)  = 0. _d 0
+            swfrac_rd(i,j,k,bi,bj)  = 0. _d 0
+            swfrac_bg(i,j,k,bi,bj)  = 0. _d 0
           ENDDO
           gamma_POM_2d(i,j,bi,bj)   = gamma_POM
           wsink0_2d(i,j,bi,bj)      = wsink0

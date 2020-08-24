@@ -1595,6 +1595,16 @@ C           Initial ice growth is triggered by open water
 C           heat flux overcoming potential melt by ocean
             tmpscal1=r_QbyATM_open(I,J)+r_QbyOCN(i,j) *
      &            (1.0 _d 0 - AREApreTH(I,J))
+#ifdef ALLOW_BLING
+#ifdef BLING_HEATING
+      IF ( useBLING ) THEN 
+C           If bio-optical feedbacks enabled, fraction of flux
+C           penetrating first layer is function of modelled chlorophyll
+            SWFracB = swfrac_ir(i,j,2,bi,bj) + swfrac_rd(i,j,2,bi,bj)
+     &              + swfrac_bg(i,j,2,bi,bj) 
+      ENDIF
+#endif
+#endif 
 C           Penetrative shortwave flux beyond first layer
 C           that is therefore not available to ice growth/melt
             tmpscal2=SWFracB * a_QSWbyATM_open(I,J)
