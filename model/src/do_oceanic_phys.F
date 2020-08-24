@@ -302,7 +302,6 @@ C jmc: moved here before any freezing/seaice pkg adjustment of surf-fluxes
 #endif /* ALLOW_AUTODIFF */
 
 #if (defined (ALLOW_SIGMAR_COST_CONTRIBUTION) || defined (ALLOW_LEITH_QG))
-
       DO bj=myByLo(myThid),myByHi(myThid)
        DO bi=myBxLo(myThid),myBxHi(myThid)
         DO k=1,Nr
@@ -314,9 +313,7 @@ C jmc: moved here before any freezing/seaice pkg adjustment of surf-fluxes
         ENDDO
        ENDDO
       ENDDO
-#  endif
-# endif
-#endif /* ALLOW_AUTODIFF */
+#endif /* ALLOW_SIGMAR_COST_CONTRIBUTION or ALLOW_LEITH_QG*/
 
 #ifdef ALLOW_FRAZIL
       IF ( useFRAZIL ) THEN
